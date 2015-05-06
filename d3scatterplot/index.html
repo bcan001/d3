@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>d3 scatterplot</title>
+</head>
+<body>
+
+
+	<div id="viz-wrapper">
+	</div>
+
+	<script src="libs/d3.min.js" ></script>
+
+	<script type="text/javascript">
+    // height and width of the svg
+    var height = 800,
+         width = 500;
+
+    // makes sure the center of the circle is at least 50px from the edge of the svg
+    var padding = 50;
+
+    // set attributes to the viz wrapper
+    var viz = d3.select("#viz-wrapper")
+                    .append('svg')
+                    .attr('id', 'viz')
+                    .attr('height', height)
+                    .attr('width', width);
+
+
+     // get data from csv file
+     d3.csv('climate_data.csv', function(data) {
+
+        
+        dots = viz.selectAll('circle')
+                     .data(data)
+                     .enter()
+                    .append('circle');
+
+        // dots.attr callback function: variable for data is 'd', variable for index is 'i'
+        dots.attr('r', function(d, i) {
+          //debugger;
+          // get absolute value of the tmax data for each date, divided by 10
+          return Math.abs(d.TMAX) / 10})
+        	// give the max value, between 0 plus the padding, and some random number that is less than the width
+          .attr('cx', function(d) {return Math.max(0 + padding, Math.random() * width - padding)})
+          .attr('cy', function(d) {return Math.max(0 + padding, Math.random() * height - padding)})
+          	// styling based on the data
+            .style('stroke', 'red')
+            .style('fill', function(d) {
+                year = d.DATE.charAt(3)
+                if (year === "3") {
+                    return "blue"
+                }
+                else {
+                    return "green"
+                }
+            });
+
+     });
+ 	</script>
+
+
+
+</body>
+</html>

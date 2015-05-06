@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Crime By Neighborhood</title>
+
+
+</head>
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+ 	<script type="text/javascript">
+
+
+
+ 	var canvas = d3.select("body").append("svg")
+		.attr("width", 1000)
+		.attr("height", 1000)
+		.attr("transform", "translate(100,100)");
+
+	var color = d3.scale.category10();
+
+	var title = canvas.append("text")
+				.attr("x", 100)
+				.attr("y", 100)
+				.text("Crimes In Chicago By Neighborhood in 2013")
+
+
+ 	d3.csv("crimestats.csv", function (data) {
+ 		console.log(data);
+
+		var group = canvas.selectAll(".circle")
+			.data(data)
+			.enter()
+			.append("g")
+				.attr("class", "circle")
+				.attr("transform", function (d) { return "translate(" + (Math.floor(Math.random() * 700) + 200) + "," + (Math.floor(Math.random() * 700) + 200) + ")"; })
+
+		group.append("circle")
+			.attr("r", function (d) { return d.crimes / 10; })
+			.attr("fill", function (d) { return color(d.crimes); })
+
+		group.append("text")
+			.attr("text-anchor", "middle")
+			.text(function (d) { return d.area; })
+
+
+ 	});
+
+
+
+ 	</script>
+	
+</body>
+</html>

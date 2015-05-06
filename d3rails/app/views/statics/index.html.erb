@@ -1,0 +1,683 @@
+<p>Index page</p>
+
+
+<div class="chart"></div>
+
+<!-- 
+<div class="chart">
+  <div style="width: 40px;">4</div>
+  <div style="width: 80px;">8</div>
+  <div style="width: 150px;">15</div>
+  <div style="width: 160px;">16</div>
+  <div style="width: 230px;">23</div>
+  <div style="width: 420px;">42</div>
+</div>
+
+ -->
+
+
+
+
+<script>
+	//d3.select("body").append("p").text("Hello World");
+
+
+	//var data = [4, 8, 15, 16, 23, 15];
+
+	var data = [];
+
+	$.getJSON('/show_page.json', function(response){
+
+		//console.log(response);
+
+		$.each(response, function(index, year){
+			console.log(year.deaths);
+			data.push(year.deaths);
+		});
+
+		var x = d3.scale.linear()
+		    .domain([0, d3.max(data)])
+		    .range([0, 420]);
+
+		d3.select(".chart")
+		  .selectAll("div")
+		    .data(data)
+		  .enter().append("div")
+		  	// d stands for each element in the data array
+		    .style("width", function(d) { return x(d) + "px"; })
+		    .text(function(d) { return d; });
+	});
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+	// another way to draw a bar chart
+	var dataArray = [34,56,22,78];
+
+	// use scales for datum's that are LARGER than 500
+	// if you don't every data point larger than 500 will be chopped off
+	var width = 500;
+	var height = 500;
+
+	// linear scale means that the values in the calculated range are the result of a linear function applied to the domain values ([22,550] is the domain). range is what the max SHOULD never exceed
+	// widthScale is a LINEAR FUNCTION
+	// this will produce a NEW range that will fit into our container 0 to 500
+	var widthScale = d3.scale.linear()
+										.domain([0,78])
+										.range([0, width]);
+
+	// using a color scale
+	var color = d3.scale.linear()
+							.domain([0,78])
+							.range(["red","blue"]);
+
+
+// adding an axis to the bar chart (use scale method of the axis object)
+var axis = d3.svg.axis()
+					//edit the number of ticks of the axis (if desired)
+					.ticks(5)
+					// use the widthScale as the maximum of the axis
+					.scale(widthScale);
+
+
+	var canvas = d3.select("body")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+								// for grouping svg elements together (helpful when using axis)
+								.append("g")
+								// transform is used for moving/transforming the whole group
+								.attr("transform", "translate(20,0)");
+
+								// call the axis to add it to the bar chart
+								// removed because we want the axis in its own group so it doesn't overlap with the bars
+								//.call(axis);
+
+
+
+	var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+									.append("rect")
+									// for each data element, it returns the width of the rectangle corresponding to that data
+									//.attr("width", function(d) { return d * 10; })
+									.attr("width", function(d) { return widthScale(d); })
+
+									.attr("fill", function(d) { return color(d); })
+									.attr("height", 50)
+									.attr("y", function(d,i) { return i*100 });
+
+
+	// append the axis to its own group so it doesn't overlap with the bars
+	canvas.append("g")
+					.attr("transform", "translate(0,400)")
+					.call(axis);
+
+
+
+
+////////////////////////////
+// transitions (duration is in milliseconds)
+circle.transition()
+	.duration(500)
+	.delay(2000)
+	.attr("cx", 150)
+	// can chain transition functions
+	.transition()
+	.attr("cy", 200)
+	// event listener: (the function will run after the transition has ended. it changes the circle color to red)
+	//.each("start", function() { d3.select(this).attr("fill", "red"); });
+	.each("end", function() { d3.select(this).attr("fill", "red"); });
+
+
+
+///////////////////////////////
+
+// working with data (you can interchange d3.json with d3.csv interchangeably without interruption)
+d3.json("my_file.json", function(data) {
+
+	var canvas = d3.select("body").append("svg")
+			.attr("width", 500)
+			.attr("height", 500);
+
+	// continue with code like we normally do, but use data in callback	
+	canvas.selectAll("rect")
+			.data(data)
+				.enter()
+				.append("rect")
+					.attr("width", function(d) { return d.age * 10; })
+					.attr("height", 48)
+					.attr("y", function(d,i) { return i * 50; })
+					.attr("fill", "blue");
+
+	// add text to each bar
+	canvas.selectAll("text")	
+			.data(data)
+			.enter()	
+					.append("text")
+					.attr("fill", "white")
+					.attr("y", function(d,i) { return i * 50 + 24 })
+					.text(function (data) { return d.name; });
+});
+
+
+
+///////////////////////////////
+// paths (making shapes other than circles and rectangles based )
+var canvas = d3.select("body").append("svg")
+							.attr("width", 500)
+							.attr("height", 500);
+
+var data = [
+	{x: 10, y: 20},
+	{x: 60, y: 60},
+	{x: 70, y: 70}
+];
+
+var group = canvas.append("g")
+			.attr("transform", "translate(100, 100)");
+
+var line = d3.svg.line()
+			.x(function (d) { return d.x; })
+			.y(function (d) { return d.y; });
+
+group.selectAll("path")
+			.data([data])
+			.enter()
+			.append("path")
+			// "d" attribute refers to the path generator
+			.attr("d", line)
+			.attr("fill", "none")
+			.attr("stroke", "black")
+			.attr("stroke-width", 10);
+
+
+
+
+
+
+////////////////////////////
+
+//arcs
+var canvas = d3.select("body").append("svg")
+							.attr("width", 500)
+							.attr("height", 500);
+
+var group = canvas.append("g")
+			.attr("transform", "translate(100, 100)");
+
+var r = 100;
+// the number of radians of a full circle: (3.14 * 2 = 6.28 radians)
+var p = Math.PI * 2; // in radians
+
+var arc = d3.svg.arc()
+			.innerRadius(r - 20) // distance from center to inner circle
+			.outerRadius(r) // distance from center to outer circle
+			.startAngle(0) // angle that the arc starts on (measured in radians, a full circle is 6.28 radians)
+			.endAngle(p - 1);	// angle that the arc ends on
+
+group.append("path")
+			.attr("d", arc)
+
+
+
+///////////////////////
+// the pie chart
+
+var data = [10, 50, 60];
+var r = 300;
+
+// give the arcs different colors so you can distinguish them by using a color scale
+// use an ordinal scale: means the input can consist of a number of names or anything that is not a continuous domain
+var color = d3.scale.ordinal()
+				.range(["red", "blue", "orange"]);
+
+
+var canvas = d3.select("body").append("svg")
+				.attr("width", 1500)
+				.attr("height", 1500);
+
+var group = canvas.append("g")
+				.attr("transform", "translate(300, 300)");
+
+// what a pie chart layout method (pie()) does is it returns an arc with attributes for every single data point
+var arc = d3.svg.arc()
+				// to make a pie chart (instead of a donut chart), set the innerRadius to 0
+				.innerRadius(200)
+				.outerRadius(r);
+
+var pie = d3.layout.pie()
+				.value(function (d) { return d; });
+
+// empty select all elements with the class of 'arc'
+var arcs = group.selectAll(".arc")
+				// pass data into the pie layout 
+				.data(pie(data))
+				.enter()
+				.append("g")
+				.attr("class", "arc");
+
+// need to create a path for each of the objects and its attributes
+arcs.append("path")
+				.attr("d", arc);
+				// using the 'data' attribute to specify what color to use:
+				.attr("fill", function(d) { return color(d.data); })
+
+
+// add text to each portion of the pie chart (puts labels in the right place)
+arcs.append("text")
+			// centroid returns the center of each arc
+			.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+
+			.attr("text-anchor", "middle")
+			.attr("font-size", "1.5em")
+			.text(function(d) { return d.data; });
+
+
+
+
+
+
+
+////////////////////////////////////////////////////
+// tree layout in d3
+// use hierarchal data:
+{
+	"name": "Max",
+	"children": [
+			{
+				"name": "Sylvia",
+				"children": [
+					{"name": "Ben"},
+					{"name": "Jane"},
+					{"name": "Mary"}
+				]
+				},
+			{
+				"name": "Bill",
+				"children": [
+					{"name": "Bob"},
+					{"name": "Jo"},
+					{"name": "Grant"}
+				]
+			}
+	]
+}
+
+// without the data: just make a diagonal curved line
+var canvas = d3.select("body").append("svg")
+				.attr("width", 500)
+				.attr("height", 500);
+
+// use diagonal path // uses diagonal curve for attaching nodes
+var diagonal = d3.svg.diagonal()
+		// starting point of path
+		.source({x: 10, y: 10})
+		// ending point of path
+		.target({x: 300, y: 300})
+
+canvas.append("path")
+		.attr("fill", "none")
+		.attr("stroke", "black")
+		.attr("d", diagonal);
+
+
+
+// now, we will use the json data above to make a tree:
+var canvas = d3.select("body").append("svg")
+				.attr("width", 500)
+				.attr("height", 500);
+				.append("g")
+						.attr("transform", "translate(50, 50)");
+// use the tree layout (like we used the pie layout earlier)
+var tree = d3.layout.tree()
+			.size([400, 400])
+
+d3.json("treedata.json", function(data) {
+	// use nodes function to get the properties of ALL people (Max all the way to grandchildren)
+	var nodes = tree.nodes(data);
+	// links between each node (contains source AND target for each link)
+	var tree = tree.links(nodes);
+
+	// empty selection nodes
+	var node = canvas.selectAll(".node")
+				.data(nodes)
+				.enter()
+				.append("g")
+						.attr("class", "node")
+						// specify where the nodes are placed on the canvas based on their coordinates
+						// to rotate nodes, just switch d.x and d.y values in the translate method
+						.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+
+	// add a circle to each node
+	node.append("circle")
+				.attr("r", 5)
+				.attr("fill", "blue");
+
+	// append text to each node
+	node.append("text")
+				.text(function (d) { return d.name; })
+
+	// create diagonal paths between nodes
+	var diagonal = d3.svg.diagonal();
+				// to rotate the paths, use projection to convert the start and ending points of each path
+				.projection(function (d) { return [d.y, d.x]; })
+
+	canvas.selectAll(".link")
+				.data(links)
+				.enter()
+				.append("path")
+					.attr("class", "link")
+					.attr("fill", "none")
+					.attr("stroke", "black")
+					.attr("d", diagonal);
+});
+
+
+//////////////////////////////////////////////
+// cluster, pack, and bubble layouts
+cluster: in tree layout, just change tree() to cluster() (takes all the nodes that do not have children and places them at the end of the layout)
+
+pack: use pack() and values attributes to set radius of circles
+pack layout:
+
+
+var canvas = d3.select("body").append("svg")
+				.attr("width", 500)
+				.attr("height", 500);
+				.append("g")
+						.attr("transform", "translate(50, 50)");
+
+var pack = d3.layout.pack()
+			.size([400, 400])
+			.padding(10);
+
+d3.json("mydata.json", function(data) {
+	var nodes = pack.nodes(data);
+
+	var node = canvas.selectAll(".node")
+		.data(nodes)
+		.enter()
+			.append("g")
+				.attr("class", "node")
+				.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+
+	// the radius is a function of the data
+	node.append("circle")
+		.attr("r", function (d) { return d.r; })
+		.attr("fill", "blue")
+		.attr("opacity", 0.25)
+		.attr("stroke", "grey")
+		.attr("stroke-width", "2");
+
+	//add the text to the circles (only child node text)
+	node.append("text")
+		// if the node has children, only show the children names in the nodes
+		.text(function (d) { return d.children ? "" : d.name; })
+
+});
+
+
+//// make it a bubble chart
+json:
+{
+	"name": "Max",
+	"value": 100,
+	"children": [
+		{ "name": "Max", "value": 100 },
+		{ "name": "Max", "value": 100 },
+		{ "name": "Max", "value": 100 },
+		{ "name": "Max", "value": 100 },
+		{ "name": "Max", "value": 100 }
+	]
+}
+
+// to change into a bubble chart, just change when appending circles:
+.attr("fill", function (d) { return d.children ? "white" : "blue"; })
+.attr("stroke", function (d) { return d.children ? "white" : "grey"; })
+
+
+
+
+////////////////////////////////////////////
+// histograms: used for showing value distribution (i.e. how many people are a certain age)
+
+ages.csv file:
+"name", "age"
+"Max", 25
+"Tim", 23
+"joe", 33
+...
+
+
+d3.csv("ages.csv", function(data) {
+	// .map() goes through the csv file and creates a new array based on what parameters you give it
+	// 'i' refers to each element in the array
+	// use parseInt() to convert all the strings in the array to integers
+	var map = data.map(function (i) { return parseInt(i.age); })
+
+	// create the histogram
+	var histogram = d3.layout.histogram()
+			// bins is the number of groups (the data is split into uniform intervals based on the min and max)
+			.bins(7)
+			// (map) is the data array we are using in the histogram
+			(map)
+
+
+	var canvas = d3.select("body").append("svg")
+				.attr("width", 500)
+				.attr("height", 500);
+			
+	var bars = canvas.selectAll(".bar")
+				.data(histogram)
+				.enter()
+				.append("g")
+
+	bars.append("rect")
+			// the spacing of each bar away from the 0,0 axis
+			.attr("x", function (d) { return d.x * 5; })
+			// each bar will start at the top of the page (based on 0,0 axis)
+			.attr("y", 0)
+			// the width of each bar (with 5 pixel space between each bar)
+			.attr("width", function (d) { return d.dx * 5 - 5; })
+			// the height of each bar
+			.attr("height", function (d) { return d.y * 20; })
+			.attr("fill", "steelblue")
+
+});
+
+
+////
+// histogram with proper styling:
+
+var width = 500;
+var height = 500;
+var padding = 50;
+
+
+d3.csv("ages.csv", function(data) {
+	// .map() goes through the csv file and creates a new array based on what parameters you give it
+	// 'i' refers to each element in the array
+	// use parseInt() to convert all the strings in the array to integers
+	var map = data.map(function (i) { return parseInt(i.age); })
+
+	// create the histogram
+	var histogram = d3.layout.histogram()
+			// bins is the number of groups (the data is split into uniform intervals based on the min and max)
+			.bins(7)
+			// (map) is the data array we are using in the histogram
+			(map)
+
+
+
+	// create the scales so that the bars fit well inside the canvas
+	var y = d3.scale.linear()
+			// find the array in the group with the longest length and set that as the domain max
+			.domain([0, d3.max(histogram.map(function (i) { return i.length; }))])
+			.range([0, height]);
+	var x = d3.scale.linear()
+			.domain([0, d3.max(map)])
+			.range([0, width]);
+	// create the axis for the histogram
+	var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom");
+	// create a group for the axis and move it down to the bottom so its bound to the bottom
+	var group = canvas.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis);
+
+
+
+	var canvas = d3.select("body").append("svg")
+				.attr("width", width)
+				// use padding to make room for the axis
+				.attr("height", height + padding);
+
+			
+	var bars = canvas.selectAll(".bar")
+				.data(histogram)
+				.enter()
+				.append("g")
+
+	bars.append("rect")
+			.attr("x", function (d) { return x(d.x); })
+			// flip the axis so the bars start at the bottom of the page
+			.attr("y", function (d) { return 500 - y(d.y); })
+			.attr("width", function (d) { return x(d.dx); })
+			.attr("height", function (d) { return y(d.y); })
+			.attr("fill", "steelblue")
+
+
+	// append the text to each of the bars
+	bars.append("text")
+		.attr("x", function (d) { return x(d.x); })
+		.attr("y", function (d) { return 500 - y(d.y); })
+		// move the text to the right spot
+		.attr("dy", "20px")
+		.attr("dx", function (d) { return x(d.dx)/2; })
+
+		.attr("fill", "white")
+		.attr("text-anchor", "middle")
+		// return the number of elements as actual text on the bars
+		.text(function (d) { return d.y; })
+
+
+});
+
+
+
+
+/////////////////////////
+// treemap layout 
+// use for a hierarchal structure in the data
+
+
+mydata.json file:
+{
+	"name": "Max",
+	"value": 100,
+	"children": [
+			{
+				"name": "Sylvia",
+				"value": 75,
+				"children": [
+						{"name": "Joe", "value": 35},
+						{"name": "Joe", "value": 35},
+						{"name": "Joe", "value": 35}
+				]
+			},
+			{
+				"name": "Sylvia",
+				"value": 75,
+				"children": [
+						{"name": "Joe", "value": 35},
+						{"name": "Joe", "value": 35},
+						{"name": "Joe", "value": 35}
+				]
+			},
+			{
+				"name": "Mr. X",
+				"value": 75
+			}
+	]
+}
+
+
+script:
+
+// function that provides us with a scale of 10 colors (see d3 documentation for more color scale methods)
+var color = d3.scale.category10();
+
+var canvas = d3.select('body').append('svg')
+		.attr("width", 500)
+		.attr("height", 500);
+
+d3.json("mydata.json", function(data) {
+
+	var treemap = d3.layout.treemap()
+				.size([500, 500])
+				.nodes(data);
+
+	var cells = canvas.selectAll(".cell")
+				.data(treemap)
+				.enter()
+				.append("g")
+				.attr("class", "cell");
+
+	cells.append("rect")
+				.attr("x", function(d) { return d.x; })
+				.attr("y", function(d) { return d.y; })
+				.attr("width", function(d) { return d.dx; })
+				.attr("height", function(d) { return d.dy; })
+				.attr("fill", function(d) { return d.children ? null : color(d.parent.name); })
+
+	cells.append("text")
+				.attr("x", function(d) { return d.x + d.dx / 2})
+				.attr("y", function(d) { return d.y + d.dy / 2})
+				.attr("text-anchor", "middle")
+				.text(function (d) { return d.children ? null : d.name; })
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+<style>
+
+	.chart div {
+	  font: 10px sans-serif;
+	  background-color: blue;
+	  text-align: right;
+	  padding: 3px;
+	  margin: 1px;
+	  color: white;
+	}
+
+</style>
