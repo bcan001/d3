@@ -651,7 +651,52 @@ d3.json("mydata.json", function(data) {
 
 
 
+//////////////////
+// maps
+// creating map of Sweden
 
+sweden.geojson file:
+
+qgis to convert shape file to geojson (shape files are more common than geojson)
+can get geojson files from internet
+
+
+var canvas = d3.select("body").append("svg")
+					.attr("height", 500)
+					.attr("width", 500);
+
+d3.json("sweden.geojson", function (data) {
+
+	var group = canvas.selectAll("g")
+				// features is the attribute with the coordinates in the geojson file
+				.data(data.features)
+				.enter()
+					.append("g")
+
+	// use projection because the world is not flat
+	//https://github.com/mbostock/d3/wiki/Geo-Projections
+	// use scale method to make the map bigger
+	var projection = d3.geo.mercator()
+				.scale(7300)
+				.translate([0,1980]);
+
+	var path = d3.geo.path().projection(projection);
+
+	var areas = group.append("path")
+				.attr("d", path)
+				.attr("class", "area")
+				.attr("fill", "steelblue");
+
+	// append text to each county
+	group.append("text")
+				// return the x and y coordinate of the data center with [0] and [1]
+				.attr("x", function (d) { return path.centroid(d)[0]; })
+				.attr("y", function (d) { return path.centroid(d)[1]; })
+				.attr("text-anchor", "middle")
+				.text(function (d) { return d.properties.LNNAM; });
+
+
+});
 
 
 
