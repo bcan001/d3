@@ -344,7 +344,7 @@ d3.json("treedata.json", function(data) {
 	// use nodes function to get the properties of ALL people (Max all the way to grandchildren)
 	var nodes = tree.nodes(data);
 	// links between each node (contains source AND target for each link)
-	var tree = tree.links(nodes);
+	var links = tree.links(nodes);
 
 	// empty selection nodes
 	var node = canvas.selectAll(".node")
