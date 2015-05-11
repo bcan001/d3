@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>d3 word cloud</title>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="./d3.layout.cloud.js"></script>
+
+</head>
+<body>
+	
+	<script>
+		var canvas = d3.select("body").append("svg")
+			.attr("width", 800)
+      .attr("height", 800)
+      .append("g")
+        .attr("transform", "translate(300,300)");
+
+		var color = d3.scale.category20();
+
+		d3.json("words2.json", function (data) {
+
+		  d3.layout.cloud().size([600, 400])
+		      .words(data.words
+		        .map(function(d) {
+		        //return {text: d, size: 10 + Math.random() * 90};
+		        return {text: d.word, size: d.value};
+		      }))
+		      .padding(5)
+		      // function to rotate text randomly either horizontally or vertically by 90 degrees
+		      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+		      .font("Impact")
+		      .fontSize(function(d) { return d.size; })
+		      // function that runs the draw function as a callback
+		      .on("end", draw)
+		      .start();
+
+		  function draw(words) {
+		    canvas.selectAll("text")
+			        .data(words)
+			      .enter().append("text")
+			        .style("font-size", function(d) { return d.size + "px"; })
+			        .style("font-family", "Impact")
+			        .style("fill", function(d, i) { return color(i); })
+			        .attr("text-anchor", "middle")
+			        .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+			        .text(function(d) { return d.text; });
+		  }
+
+		});
+
+
+	</script>
+
+
+</body>
+</html>

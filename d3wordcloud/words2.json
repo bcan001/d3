@@ -1,0 +1,60 @@
+{
+	"words": [
+	  {
+	  	"word": "Hello",
+	  	"value": 39
+		},
+		{
+	  	"word": "normally",
+	  	"value": 40
+		},
+		{
+	  	"word": "cloud",
+	  	"value": 67
+		},
+		{
+	  	"word": "windows",
+	  	"value": 20
+		},
+		{
+	  	"word": "groupon",
+	  	"value": 10
+		},
+		{
+	  	"word": "keys",
+	  	"value": 60
+		},
+		{
+	  	"word": "truck",
+	  	"value": 80
+		},
+		{
+	  	"word": "wallet",
+	  	"value": 30
+		},
+		{
+	  	"word": "iphone",
+	  	"value": 14
+		},
+		{
+	  	"word": "chair",
+	  	"value": 75
+		},
+		{
+	  	"word": "fish",
+	  	"value": 80
+		},
+		{
+	  	"word": "taco",
+	  	"value": 45
+		},
+		{
+	  	"word": "pepsi",
+	  	"value": 19
+		},
+		{
+	  	"word": "awesome",
+	  	"value": 70
+		}
+  ]
+}
