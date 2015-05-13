@@ -67,8 +67,46 @@
 			// 		.attr("r", 10)
 			// 		.attr("fill", "black")
 
+			// add city data from csv file
+			d3.csv("allcities.csv", function(data) {
+				console.log(data);
+
+				group.selectAll("circle")
+           .data(data)
+           .enter()
+	           .append("circle")
+		           .attr("cx", function(d) { return projection([d.longitude, d.latitude])[0]; })
+		           .attr("cy", function(d) { return projection([d.longitude, d.latitude])[1]; })
+		           .attr("r", 1)
+		           .style("fill", "black")
+			});
+
 
 	 	});
+
+	//https://github.com/deremer/Cities/blob/master/countries/unitedstates.js
+	// setTimeout(function (){
+	// 	d3.json("cities.json", function (data) {
+	// 		console.log(data);
+
+	// 		var projection = d3.geo.mercator()
+	// 				.scale(400)
+	// 				// [480,250] is the default translate
+	// 				.translate([1300,800]);
+
+	// 		canvas.selectAll(".pin")
+	// 				.data(data.cities)
+	// 				.enter()
+	// 					.append("circle", ".pin")
+	// 					.attr("r", 25)
+	// 					.attr("fill", "black")
+	// 					.attr("stroke", "black")
+	// 			    .attr("transform", function(d) { return "translate(" + projection([d.ll[0], d.ll[1]]) + ")" })
+	// 	});
+	// }, 5000);
+
+
+
 
  	</script>
 	

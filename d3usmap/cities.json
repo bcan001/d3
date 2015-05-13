@@ -1,0 +1,9 @@
+{
+	"cities": [
+		 {"city": "New York, NY, USA", "ll": [40.7143528,74.00597309999999] }
+		,{"city": "Manhattan, New York, NY, USA", "ll": [40.7834345,73.9662495] }
+		,{"city": "Los Angeles, CA, USA", "ll": [34.0522342,118.2436849] }
+		,{"city": "Chicago, IL, USA", "ll": [41.8781136,87.6297982] }
+		,{"city": "Houston, TX, USA", "ll": [29.7601927,95.36938959999999]}
+	]
+}
