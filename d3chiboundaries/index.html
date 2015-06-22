@@ -35,11 +35,8 @@
 				// // [480,250] is the default translate
 				// .translate([800,600]);
 
-				// .scale(3500)
-				// .translate([5700, 3000]);
-
-				.scale(7900)
-				.translate([12500, 6500]);
+				.scale(40000)
+				.translate([61700, 32500]);
 
 
 			var path = d3.geo.path().projection(projection);
@@ -55,12 +52,20 @@
 				.attr("x", function (d) { return path.centroid(d)[0]; })
 				.attr("y", function (d) { return path.centroid(d)[1]; })
 				.attr("text-anchor", "middle")
-				.attr("style", "font-size:1px")
+				.attr("style", "font-size:3px")
 				.text(function (d) { return d.properties.COMMUNITY; });
-
 
 		});
 
+
+
+
+		d3.json("bikepaths.json", function(data) {
+			console.log(data);
+
+			
+
+		});
 
 
 

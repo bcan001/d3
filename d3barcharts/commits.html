@@ -1,0 +1,77 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Commits Per Day</title>
+</head>
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script>
+		var dataArray = [16,23,28,23,33,26,21];
+
+
+
+		// use scales for datum's that are LARGER than 500
+	// if you don't every data point larger than 500 will be chopped off
+	var width = 500;
+	var height = 500;
+
+	// linear scale means that the values in the calculated range are the result of a linear function applied to the domain values ([22,550] is the domain). range is what the max SHOULD never exceed
+	// widthScale is a LINEAR FUNCTION
+	// this will produce a NEW range that will fit into our container 0 to 500
+	var widthScale = d3.scale.linear()
+										.domain([0,55])
+										.range([0, width]);
+
+	// using a color scale
+	var color = d3.scale.linear()
+							.domain([0,78])
+							.range(["red","blue"]);
+
+
+// adding an axis to the bar chart (use scale method of the axis object)
+var axis = d3.svg.axis()
+					.orient(["left"])
+					//edit the number of ticks of the axis (if desired)
+					.ticks(10)
+					// use the widthScale as the maximum of the axis
+					.scale(widthScale);
+
+
+	var canvas = d3.select("body")
+								.append("svg")
+								.attr("width", width)
+								.attr("height", height)
+
+								// for grouping svg elements together (helpful when using axis)
+								.append("g")
+								// transform is used for moving/transforming the whole group
+								.attr("transform", "translate(40,0)");
+
+								// call the axis to add it to the bar chart
+								// removed because we want the axis in its own group so it doesn't overlap with the bars
+								//.call(axis);
+
+	var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+									.append("rect")
+									// for each data element, it returns the width of the rectangle corresponding to that data
+									//.attr("width", function(d) { return d * 10; })
+									.attr("height", function(d) { return widthScale(d); })
+									.attr("fill", function(d) { return color(d); })
+									.attr("width", 50)
+									.attr("x", function(d,i) { return i*55 })
+									.attr("y", function(d,i) { return i + 400 - widthScale(d)});
+
+
+	// append the axis to its own group so it doesn't overlap with the bars
+	canvas.append("g")
+					.attr("transform", "translate(0,400)")
+					.call(axis)
+					.attr("transform", "rotate(0)");
+
+
+
+	</script>
+</body>
+</html>
